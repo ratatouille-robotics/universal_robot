@@ -65,6 +65,9 @@
     safety_pos_margin:=0.15
     safety_k_position:=20"
   >
+    <!-- Set base frame z-axis rotation here -->
+    <xacro:property name="base_z_rotation" value="0" />
+
     <!-- Load configuration data from the provided .yaml files -->
     <xacro:read_model_data
       joint_limits_parameters_file="${joint_limits_parameters_file}" 
@@ -79,7 +82,7 @@
     <link name="${prefix}base_link"/>
     <link name="${prefix}base_link_inertia">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+        <origin xyz="0 0 0" rpy="0 0 ${base_z_rotation}"/>
         <geometry>
           <mesh filename="${base_visual_mesh}"/>
         </geometry>
@@ -88,7 +91,7 @@
         </material>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+        <origin xyz="0 0 0" rpy="0 0 ${base_z_rotation}"/>
         <geometry>
           <mesh filename="${base_collision_mesh}"/>
         </geometry>
@@ -228,7 +231,7 @@
            Use the joint between 'base_link' and 'base_link_inertia' (a dummy
            link/frame) to introduce the necessary rotation over Z (of pi rad).
       -->
-      <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+      <origin xyz="0 0 0" rpy="0 0 ${base_z_rotation}" />
     </joint>
     <joint name="${prefix}shoulder_pan_joint" type="revolute">
       <parent link="${prefix}base_link_inertia" />
@@ -311,7 +314,7 @@
            to correctly align 'base' with the 'Base' coordinate system of
            the UR controller.
       -->
-      <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+      <origin xyz="0 0 0" rpy="0 0 ${base_z_rotation}"/>
       <parent link="${prefix}base_link"/>
       <child link="${prefix}base"/>
     </joint>
