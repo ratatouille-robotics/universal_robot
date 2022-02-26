@@ -12,7 +12,10 @@
   <arg     if="$(arg info)" name="command_args" value="--debug" />
 
   <!-- move_group settings -->
-  <arg name="pipeline" default="ompl" />
+  <!-- Uncomment for PILZ Industrial Motion Planner -->
+  <arg name="pipeline" default="pilz_industrial_motion_planner" />
+  <!-- Uncomment for OMPL Motion Planner  -->
+  <!-- <arg name="pipeline" default="ompl"/> -->
   <arg name="allow_trajectory_execution" default="true"/>
   <arg name="fake_execution" default="false"/>
   <arg name="max_safe_path_cost" default="1"/>
