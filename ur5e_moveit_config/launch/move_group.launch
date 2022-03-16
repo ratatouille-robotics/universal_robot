@@ -12,10 +12,8 @@
   <arg     if="$(arg info)" name="command_args" value="--debug" />
 
   <!-- move_group settings -->
-  <!-- Uncomment for PILZ Industrial Motion Planner -->
+  <!-- Set default planning pipeline - ompl (or) pilz_industrial_motion_planner -->
   <arg name="pipeline" default="pilz_industrial_motion_planner" />
-  <!-- Uncomment for OMPL Motion Planner  -->
-  <!-- <arg name="pipeline" default="ompl"/> -->
   <arg name="allow_trajectory_execution" default="true"/>
   <arg name="fake_execution" default="false"/>
   <arg name="max_safe_path_cost" default="1"/>
@@ -47,9 +45,22 @@
   </include>
 
   <!-- Planning Functionality -->
-  <include ns="move_group" file="$(find ur5e_moveit_config)/launch/planning_pipeline.launch.xml">
-    <arg name="pipeline" value="$(arg pipeline)" />
-  </include>
+  <group ns="move_group/planning_pipelines">
+    <!-- OMPL -->
+    <include ns="ompl" file="$(find ur5e_moveit_config)/launch/planning_pipeline.launch.xml">
+      <arg name="pipeline" value="ompl" />
+    </include>
+
+    <!-- Pilz Industrial Motion-->
+    <include ns="pilz_industrial_motion_planner" file="$(find ur5e_moveit_config)/launch/planning_pipeline.launch.xml">
+      <arg name="pipeline" value="pilz_industrial_motion_planner" />
+    </include>
+
+    <!-- Load non-default planner if passed as parameter -->
+    <include if="$(eval arg('pipeline') not in ['ompl', 'pilz_industrial_motion_planner'])" ns="$(arg pipeline)" file="$(find ur5e_moveit_config)/launch/planning_pipeline.launch.xml">
+      <arg name="pipeline" value="$(arg pipeline)" />
+    </include>
+  </group>
 
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find ur5e_moveit_config)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
@@ -71,6 +82,7 @@
     <param name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
     <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
+    <param name="default_planning_pipeline" value="$(arg pipeline)"/>
     <param name="capabilities" value="$(arg capabilities)"/>
     <param name="disable_capabilities" value="$(arg disable_capabilities)"/>
 
